@@ -12,12 +12,35 @@ const authRoutes = require("./src/routes/authRoutes");
 
 const app = express()
 
-app.use(cors({
-    origin:'*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-}))
+// app.use(cors({
+//     origin:[
+//         process.env.CLIENT_URL,
+//         'http://localhost:5173'
+//     ],
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//     credentials: true
+// }))
+
+const allowedOrigins = [
+    "http://localhost:5173",
+    process.env.CLIENT_URL
+];
+
+app.use(
+    cors({
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("CORS not allowed"));
+            }
+        },
+        credentials: true
+    })
+);
+
+
 app.use(cookieParser())
 app.use(express.json())
 
